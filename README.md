@@ -32,6 +32,45 @@
 $ npm install
 ```
 
+## prepare postgres database for project
+
+```bash
+$ docker-compose up
+```
+
+## start containers and inicialize postgres database for project
+
+```bash
+$ docker-compose start
+```
+
+## Run migration for pupulate database
+
+```bash
+$ npm run build
+$ ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run
+```
+
+## Revert last execute migration
+
+```bash
+$ npm run build
+$ ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert
+```
+
+## Run migration
+```bash
+$ ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run
+```
+## Rollback migration
+```
+$ ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert
+```
+## Need create Migration?
+## 1 - Create Migrations
+```bash
+$ npx typeorm migration:create -n <name> -d src/migrations
+```
 ## Running the app
 
 ```bash
