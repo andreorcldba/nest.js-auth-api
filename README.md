@@ -52,4 +52,4 @@ password: 123
 ## Stay in touch
 
 - Author - [André Vargas]
-- Linkedin - [https://nestjs.com](https://nestjs.com/)
+- Linkedin - [https://www.linkedin.com/in/andre-machado-de-vargas]
