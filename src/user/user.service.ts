@@ -6,7 +6,6 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-
 @Injectable()
 export class UserService {
 
@@ -15,6 +14,9 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
+  /**
+    * Create a new user.
+    */
   async create(createUserDto: CreateUserDto) {
     createUserDto.password = await bcrypt.hash(createUserDto.password, 8);
 
@@ -33,11 +35,16 @@ export class UserService {
       }
     }
   }
-
+  /**
+    * List all users.
+    */
   async findAll() {
     return await this.userRepository.find({ select: ['id', 'email', 'created_at', 'updated_at'] });
   }
 
+  /**
+    * List one user for email.
+    */
   async findOne(email: string) {
     const user = await this.userRepository.findOne({
       where: {
@@ -51,7 +58,9 @@ export class UserService {
     }
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
-
+  /**
+    * update a user.
+    */
   async update(email: string, updateUserDto: UpdateUserDto) {
 
     let moment = require('moment');
@@ -77,7 +86,9 @@ export class UserService {
       }
     }
   }
-
+  /**
+    * delete a user.
+    */
   async remove(email: string) {
 
     try {

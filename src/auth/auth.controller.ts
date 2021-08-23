@@ -1,34 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Param, Post, UseGuards, Req, Patch, HttpCode, Header, Res, Body } from '@nestjs/common';
+import { Response } from 'express';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { LocalAuthGuard } from './guard/local-auth.guard';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { RequestWithUser } from './interface/requestWithUser.interface';
+import { TokenDto } from './dto/token.dto';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @HttpCode(200)
+  @UseGuards(LocalAuthGuard)
+  @Post('log-in')
+  async login(@Req() request: RequestWithUser, @Res({passthrough:true}) res: Response ) {
+
+    var {user} = request;
+    var token = this.authService.getCookieWithJwtToken(user.email)["access_token"];
+    this.authService.setCookieWithJwtToken(user.id, token);
+
+    user.password = undefined;
+    user.remember_token = undefined;
+    user = {...user, ...{token:token}};
+      
+    res.cookie('Set-Cookie', token);
+  
+    return user;
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @HttpCode(200)
+  @Post('refresh-token')
+  async refreshToken(@Body() token: TokenDto) {
+    const refresh_token = this.authService.getCookieWithJwtRefreshToken(token.email, token.old_token);
+    return refresh_token;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
+  @UseGuards(JwtAuthGuard)
+  @Patch('log-out/:email')
+  async logout(@Param('email') email: string, @Res({passthrough:true}) res: Response ) {
+    res.cookie('Set-Cookie', `Authentication=; HttpOnly; Path=/; Max-Age=0`);
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+    return this.authService.logout(email);
   }
 }
