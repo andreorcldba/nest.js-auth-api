@@ -43,6 +43,8 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+## Check current api documentation in "http://localhost:3000/api/"
+
 ## Default user
 email: admin@admin.com
 password: 123
