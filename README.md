@@ -17,7 +17,7 @@ $ npm install
 $ docker-compose up
 ```
 
-## start containers and inicialize postgres database for project
+## Start containers and inicialize postgres database for project
 
 ```bash
 $ docker-compose start
