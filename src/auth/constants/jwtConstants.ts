@@ -1,1 +1,0 @@
-export const jwtConstants = { secret: "p:C%^sm8/M[@fm=2", expirationTime: '2h' };
